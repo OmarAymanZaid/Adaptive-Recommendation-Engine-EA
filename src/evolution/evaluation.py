@@ -2,7 +2,13 @@ import numpy as np
 
 
 def predict_rating(user_vector, item_vector):
-    return float(np.dot(user_vector, item_vector))
+    pred = np.dot(user_vector, item_vector)
+
+    pred = np.tanh(pred) # Squash to [-1, 1]
+
+    pred = 1 + (pred + 1) * 2 # Map to rating scale [1, 5]
+
+    return float(pred)
 
 
 def evaluate_user(user, items_dict, user_ratings):
@@ -13,7 +19,7 @@ def evaluate_user(user, items_dict, user_ratings):
     """
 
     if not user_ratings:
-        user.fitness = 0
+        user.fitness = -1e9  # Penalize users with no ratings
         return
 
     errors = []
@@ -39,7 +45,7 @@ def evaluate_item(item, users_dict, item_ratings):
     """
 
     if not item_ratings:
-        item.fitness = 0
+        item.fitness = -1e9  # Penalize items with no ratings
         return
 
     errors = []
