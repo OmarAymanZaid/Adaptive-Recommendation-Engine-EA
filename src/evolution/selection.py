@@ -54,7 +54,7 @@ def select_parents(population, method="tournament", tournament_size=3):
     else:
         raise ValueError(f"Unknown selection method: {method}")
 
-    return p1, 
+    return p1,p2 
 
 
 def select_population(population, method="tournament", size=None, tournament_size=3):
