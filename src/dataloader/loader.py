@@ -28,14 +28,17 @@ def generate_synthetic_data(
             if np.random.rand() > sparsity:
                 continue
 
-            rating = np.dot(true_users[u], true_items[i])
+            # Calculate dot product and normalize by dimension to keep it roughly in [-1, 1]
+            rating = np.dot(true_users[u], true_items[i]) / dim
+            
             rating += np.random.normal(0, noise)
 
-            # normalize to rating scale
             rating = np.clip(rating, -1, 1)
+            
+            # Scale to rating scale (1 to 5)
             rating = rating_scale[0] + (rating + 1) * (rating_scale[1] - rating_scale[0]) / 2
-
-            rating = float(rating)
+            
+            rating = float(round(rating, 1))
 
             user_ratings[u].append((i, rating))
             item_ratings[i].append((u, rating))
