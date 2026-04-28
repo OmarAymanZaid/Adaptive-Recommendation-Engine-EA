@@ -5,6 +5,12 @@ class BaseIndividual:
         self.vector = np.array(vector, dtype=float)
         self.fitness = None  # Higher is better (we'll use -MSE)
 
+    def predict(self, other_vector):
+        """
+        Predicts a rating by calculating the dot product with another vector.
+        """
+        return float(np.dot(self.vector, other_vector))
+
     def copy(self):
         clone = self.__class__(self.vector.copy())
         clone.fitness = self.fitness

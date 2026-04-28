@@ -1,8 +1,8 @@
+import numpy as np
 from config.parameters import PARAMS
 from utils.seeds import set_seed
 from dataloader.loader import load_dataset
 from evolution.coevolution import run_coevolution
-
 
 def main():
 
@@ -14,6 +14,7 @@ def main():
     # -------------------------
     # 2. Load dataset
     # -------------------------
+    # Using default synthetic parameters
     dataset = load_dataset()
 
     # -------------------------
@@ -39,18 +40,25 @@ def main():
     users = results["users"]
     items = results["items"]
 
-    user = users[0]
+    # Get the absolute fittest user in the final population
+    best_user = max(users, key=lambda u: u.fitness if u.fitness is not None else -float('inf'))
+    print(f"Top 5 unique recommendations for User {best_user.user_id}:")
 
-    scores = []
+    # Use a dictionary to filter out the clones, keeping only the highest score for each ID
+    unique_item_scores = {}
+    
     for item in items:
-        score = user.predict(item.vector)
-        scores.append((item.item_id, score))
+        score = float(np.dot(best_user.vector, item.vector))
+        
+        if item.item_id not in unique_item_scores or score > unique_item_scores[item.item_id]:
+            unique_item_scores[item.item_id] = score
 
-    scores.sort(key=lambda x: x[1], reverse=True)
+    # Convert the dictionary back to a list of tuples and sort it
+    sorted_scores = sorted(unique_item_scores.items(), key=lambda x: x[1], reverse=True)
 
-    for item_id, score in scores[:5]:
+    # Print the top 5 unique items
+    for item_id, score in sorted_scores[:5]:
         print(f"Item {item_id} → score: {score:.4f}")
-
 
 if __name__ == "__main__":
     main()

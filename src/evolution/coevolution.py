@@ -4,7 +4,7 @@ from evolution.evaluation import evaluate_users, evaluate_items
 from evolution.selection import select_population
 from evolution.crossover import crossover
 from evolution.mutation import mutate
-from evolution.replacement import elitist_replacement, generational_replacement
+from evolution.replacement import elitist_replacement, generational_replacement, species_preserving_replacement
 from evolution.population import initialize_populations
 
 def run_coevolution(dataset, config):
@@ -86,14 +86,17 @@ def run_coevolution(dataset, config):
         item_offspring = item_offspring[:len(items)]
 
         # -------------------------
+        # Evaluate Offspring Before Replacement
+        # -------------------------
+        # We must score the babies so they can fairly compete against their parents!
+        evaluate_users(user_offspring, items, dataset)
+        evaluate_items(item_offspring, users, dataset)
+
+        # -------------------------
         # Replacement
         # -------------------------
-        if config["replacement"] == "elitist":
-            users = elitist_replacement(users, user_offspring, elite_size=config.get("elite_size", 2))
-            items = elitist_replacement(items, item_offspring, elite_size=config.get("elite_size", 2))
-        else:
-            users = generational_replacement(user_offspring)
-            items = generational_replacement(item_offspring)
+        users = species_preserving_replacement(users, user_offspring)
+        items = species_preserving_replacement(items, item_offspring)
 
         # Optional logging
         print(f"Gen {gen}: User best={best_user_fitness:.4f}, Item best={best_item_fitness:.4f}")
