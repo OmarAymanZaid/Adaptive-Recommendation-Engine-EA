@@ -71,18 +71,36 @@ def styled_entry(parent, textvariable, width=10):
 def styled_combo(parent, textvariable, values, width=18, **kw):
     style = ttk.Style()
     style.theme_use("clam")
+
     style.configure(
         "Dark.TCombobox",
-        fieldbackground=ENTRY_BG, background=CARD,
-        foreground=FG, arrowcolor=ACCENT2,
-        selectbackground=CARD, selectforeground=FG,
-        bordercolor=FG2, lightcolor=CARD, darkcolor=CARD
+        fieldbackground=ENTRY_BG,
+        background=CARD,
+        foreground=FG,
+        arrowcolor=ACCENT2,
+        bordercolor=FG2,
+        lightcolor=CARD,
+        darkcolor=CARD
     )
+
+    style.map(
+        "Dark.TCombobox",
+        fieldbackground=[("readonly", ENTRY_BG)],
+        foreground=[("readonly", FG)],
+        selectbackground=[("readonly", CARD)],
+        selectforeground=[("readonly", FG)],
+    )
+
     cb = ttk.Combobox(
-        parent, textvariable=textvariable, values=values,
-        width=width, state="readonly", style="Dark.TCombobox",
+        parent,
+        textvariable=textvariable,
+        values=values,
+        width=width,
+        state="readonly",
+        style="Dark.TCombobox",
         font=FONT_BODY
     )
+
     return cb
 
 
