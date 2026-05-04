@@ -65,3 +65,41 @@ def evaluate_items(item_population, user_population, dataset):
     for item in item_population:
         item_ratings = dataset["item_ratings"].get(item.item_id, [])
         evaluate_item(item, users_dict, item_ratings)
+
+
+
+#Under this is new part added for GA .
+
+
+# --- New Function For GA ------
+
+def evaluate_single_solution(solution, dataset):
+    errors = []
+    
+    # Loop through all real user ratings to compute overall MSE
+    for user_id, ratings in dataset.get("user_ratings", {}).items():
+        if not ratings:
+            continue
+            
+        u_vec = solution.get_user_vector(user_id)
+        if u_vec is None: 
+            continue
+            
+        for item_id, true_rating in ratings:
+            i_vec = solution.get_item_vector(item_id)
+            if i_vec is None:
+                continue 
+                
+            pred = float(np.dot(u_vec, i_vec))
+            error = (pred - true_rating) ** 2
+            errors.append(error)
+
+    if not errors:
+        solution.fitness = -float('inf') 
+    else:
+        mse = np.mean(errors)
+        solution.fitness = -mse
+
+def evaluate_solutions(solution_population, dataset):
+    for solution in solution_population:
+        evaluate_single_solution(solution, dataset)
