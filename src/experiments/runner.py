@@ -1,5 +1,13 @@
 import copy
+from pathlib import Path
+import sys
 import time
+
+# This finds the 'src' directory (the parent of the current file)
+src_path = str(Path(__file__).parent.parent)
+if src_path not in sys.path:
+    sys.path.append(src_path)
+
 from config.parameters import PARAMS
 from utils.seeds import set_seed
 from dataloader.loader import load_dataset
