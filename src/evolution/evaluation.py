@@ -50,7 +50,7 @@ def evaluate_item(item, users_dict, item_ratings):
 
 
 def evaluate_users(user_population, item_population, dataset):
-  
+
     items_dict = {item.item_id: item for item in item_population}
 
     for user in user_population:
