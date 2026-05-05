@@ -42,7 +42,7 @@ def run_coevolution(dataset, config):
         item_history.append(best_item_fitness)
 
         # -------------------------
-        # Create new user population
+        # Create a user mating pool
         # -------------------------
         user_selected = select_population(
             users,
@@ -63,9 +63,9 @@ def run_coevolution(dataset, config):
             
         user_offspring = user_offspring[:len(users)]
 
-        # -------------------------
-        # Create new item population
-        # -------------------------
+        # ---------------------------
+        # Create an item mating pool
+        # ---------------------------
         item_selected = select_population(
             items,
             method=config["selection_method"],
