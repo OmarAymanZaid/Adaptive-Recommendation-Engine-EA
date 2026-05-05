@@ -1,9 +1,9 @@
 import numpy as np
 import random
 
-# -----------------------------
-# Gaussian Mutation
-# -----------------------------
+# -----------------------------------------
+# Gaussian Mutation (Non-uniform Mutation)
+# -----------------------------------------
 def gaussian_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
     """
     Vectorized Gaussian mutation.
@@ -19,9 +19,9 @@ def gaussian_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
 
     return new_vector
 
-# -----------------------------
-# Random Reset Mutation
-# -----------------------------
+# -----------------------------------------
+# Random Reset Mutation (Uniform Mutation)
+# -----------------------------------------
 def random_reset_mutation(vector, mutation_rate=0.1, low=-1.0, high=1.0):
     """
     Vectorized random reset mutation.
