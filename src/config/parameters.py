@@ -14,8 +14,8 @@ PARAMS = {
 
     "init_method": "uniform",
     
-    "replacement": "elitist",  # FIX: Replaced "elitism": True with this
-    "elite_size": 2,           # Needed for elitist replacement
+    "replacement": "species",
+    "elite_size": 2,
 
     "random_seed": 42,
 }
