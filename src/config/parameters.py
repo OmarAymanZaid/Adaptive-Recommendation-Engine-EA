@@ -14,7 +14,7 @@ PARAMS = {
 
     "init_method": "uniform",
     
-    "replacement": "species",
+    "replacement_method": "species",
     "elite_size": 2,
 
     "random_seed": 42,

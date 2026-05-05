@@ -38,3 +38,17 @@ def species_preserving_replacement(parents, offspring):
             
     # Return a list containing exactly one elite representative for every ID
     return list(best_by_id.values())
+
+
+def replace_population(parents, offspring, method="species", elite_size=2):
+    if method == "generational":
+        return generational_replacement(offspring)
+
+    elif method == "elitist":
+        return elitist_replacement(parents, offspring, elite_size)
+
+    elif method == "species":
+        return species_preserving_replacement(parents, offspring)
+
+    else:
+        raise ValueError(f"Unknown replacement method: {method}")

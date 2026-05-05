@@ -4,7 +4,7 @@ from evolution.evaluation import evaluate_users, evaluate_items
 from evolution.selection import select_population
 from evolution.crossover import crossover
 from evolution.mutation import mutate
-from evolution.replacement import elitist_replacement, generational_replacement, species_preserving_replacement
+from evolution.replacement import replace_population
 from evolution.population import initialize_populations
 
 def run_coevolution(dataset, config):
@@ -95,8 +95,19 @@ def run_coevolution(dataset, config):
         # -------------------------
         # Replacement
         # -------------------------
-        users = species_preserving_replacement(users, user_offspring)
-        items = species_preserving_replacement(items, item_offspring)
+        users = replace_population(
+            users,
+            user_offspring,
+            method=config["replacement_method"],
+            elite_size=config.get("elite_size", 2)
+        )
+
+        items = replace_population(
+            items,
+            item_offspring,
+            method=config["replacement_method"],
+            elite_size=config.get("elite_size", 2)
+)
 
         # Optional logging
         print(f"Gen {gen}: User best={best_user_fitness:.4f}, Item best={best_item_fitness:.4f}")

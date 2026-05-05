@@ -16,16 +16,12 @@ from config.parameters import PARAMS
 from dataloader.loader import load_dataset
 from evolution.coevolution import run_coevolution
 
-# Import the new Standard GA module
+# ── NEW: Standard GA import ──────────────────────────────────────────────────
 try:
     from evolution.run_standard_ga import run_standard_ga
 except ImportError:
-    # Fallback in case it's named something else
-    pass 
+    pass
 
-# ─────────────────────────────────────────────
-# Attempt to import set_seed (optional utility)
-# ─────────────────────────────────────────────
 try:
     from utils.seeds import set_seed
 except ImportError:
@@ -36,20 +32,27 @@ except ImportError:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  COLOUR PALETTE  (dark industrial / utilitarian — fits an EA "engine" theme)
+#  COLOUR PALETTE
 # ══════════════════════════════════════════════════════════════════════════════
-BG        = "#1a1a2e"   
-PANEL     = "#16213e"   
-CARD      = "#0f3460"   
-ACCENT    = "#e94560"   
-ACCENT2   = "#53c0f0"   
-FG        = "#e0e0e0"   
-FG2       = "#8899aa"   
+BG        = "#1a1a2e"
+PANEL     = "#16213e"
+CARD      = "#0f3460"
+ACCENT    = "#e94560"
+ACCENT2   = "#53c0f0"
+FG        = "#e0e0e0"
+FG2       = "#8899aa"
 ENTRY_BG  = "#0d1b2a"
 SUCCESS   = "#4ecb71"
+WARN      = "#f0a500"
 FONT_H    = ("Courier New", 11, "bold")
 FONT_BODY = ("Courier New", 10)
 FONT_SM   = ("Courier New", 9)
+
+# Replacement options per algorithm
+REPLACEMENT_OPTIONS = {
+    "coevolution": ["Species", "Elitist", "Generational"],
+    "standard ga": ["Elitist", "Generational"],
+}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -59,19 +62,22 @@ FONT_SM   = ("Courier New", 9)
 def styled_label(parent, text, font=FONT_BODY, color=FG2, **kw):
     return tk.Label(parent, text=text, font=font, fg=color, bg=parent["bg"], **kw)
 
+
 def styled_entry(parent, textvariable, width=10):
     return tk.Entry(
         parent, textvariable=textvariable, width=width,
         font=FONT_BODY, bg=ENTRY_BG, fg=FG,
         insertbackground=FG, relief="flat",
         highlightthickness=1, highlightcolor=ACCENT2,
-        highlightbackground=FG2
+        highlightbackground=FG2,
     )
 
+
+# ── CHANGED: combobox styling fixed — explicit option db overrides ensure
+#    selected text is always readable in all Tk/ttk themes ───────────────────
 def styled_combo(parent, textvariable, values, width=18, **kw):
     style = ttk.Style()
     style.theme_use("clam")
-
     style.configure(
         "Dark.TCombobox",
         fieldbackground=ENTRY_BG,
@@ -80,17 +86,18 @@ def styled_combo(parent, textvariable, values, width=18, **kw):
         arrowcolor=ACCENT2,
         bordercolor=FG2,
         lightcolor=CARD,
-        darkcolor=CARD
+        darkcolor=CARD,
+        selectbackground=ENTRY_BG,
+        selectforeground=FG,
     )
-
     style.map(
         "Dark.TCombobox",
-        fieldbackground=[("readonly", ENTRY_BG)],
-        foreground=[("readonly", FG)],
-        selectbackground=[("readonly", CARD)],
+        fieldbackground=[("readonly", ENTRY_BG), ("disabled", PANEL)],
+        foreground=[("readonly", FG), ("disabled", FG2)],
+        selectbackground=[("readonly", ENTRY_BG)],
         selectforeground=[("readonly", FG)],
+        background=[("readonly", CARD), ("active", CARD)],
     )
-
     cb = ttk.Combobox(
         parent,
         textvariable=textvariable,
@@ -98,29 +105,34 @@ def styled_combo(parent, textvariable, values, width=18, **kw):
         width=width,
         state="readonly",
         style="Dark.TCombobox",
-        font=FONT_BODY
+        font=FONT_BODY,
+        **kw,
     )
+    # Force Tk option-db overrides so the entry part never inverts colours
+    cb.option_add("*TCombobox*Listbox.background", ENTRY_BG)
+    cb.option_add("*TCombobox*Listbox.foreground", FG)
+    cb.option_add("*TCombobox*Listbox.selectBackground", ACCENT2)
+    cb.option_add("*TCombobox*Listbox.selectForeground", BG)
     return cb
+
 
 def make_card(parent, title="", padx=12, pady=8):
     outer = tk.Frame(parent, bg=CARD, bd=0)
     if title:
         tk.Label(
             outer, text=f"  {title}  ",
-            font=FONT_H, fg=ACCENT2, bg=CARD,
-            anchor="w"
+            font=FONT_H, fg=ACCENT2, bg=CARD, anchor="w",
         ).pack(fill="x", padx=padx, pady=(pady, 2))
-        sep = tk.Frame(outer, bg=ACCENT2, height=1)
-        sep.pack(fill="x", padx=padx)
+        tk.Frame(outer, bg=ACCENT2, height=1).pack(fill="x", padx=padx)
     inner = tk.Frame(outer, bg=CARD)
     inner.pack(fill="both", expand=True, padx=padx, pady=pady)
     return outer, inner
 
+
 def grid_row(frame, row, label_text, widget, col_label=0, col_widget=1,
              pady=5, padx=(0, 20)):
     styled_label(frame, label_text).grid(
-        row=row, column=col_label, sticky="w", pady=pady, padx=(0, 10)
-    )
+        row=row, column=col_label, sticky="w", pady=pady, padx=(0, 10))
     widget.grid(row=row, column=col_widget, sticky="w", pady=pady, padx=padx)
 
 
@@ -135,35 +147,53 @@ class CoevoApp(tk.Tk):
         self.title("Evolutionary Recommendation Engine")
         self.configure(bg=BG)
         self.resizable(True, True)
-        self.minsize(1050, 680)
+        self.minsize(1050, 720)
 
-        self._results   = None
-        self._running   = False
-        self._results_type = "coevolution" # Tracks which algorithm was run
+        self._results       = None
+        self._dataset       = None
+        self._cfg           = None
+        self._running       = False
+        self._results_type  = "coevolution"
 
         self._build_variables()
         self._build_ui()
 
+        # Traces
         self.sel_var.trace_add("write", self._toggle_tournament)
+        self.algo_var.trace_add("write", self._on_algo_changed)
         self.dataset_var.trace_add("write", self._toggle_file_picker)
+        # ── NEW: watch replacement to sync elite-size label colour ──────────
+        self.replacement_var.trace_add("write", self._on_replacement_changed)
+
+    # ──────────────────────────────────────────────────────────────────────────
+    #  VARIABLES
+    # ──────────────────────────────────────────────────────────────────────────
 
     def _build_variables(self):
         p = PARAMS
-        self.algo_var       = tk.StringVar(value="Coevolution")
-        self.sel_var        = tk.StringVar(value=p.get("selection_method", "tournament").capitalize())
-        self.cx_var         = tk.StringVar(value=p.get("crossover_method", "one_point").replace("_", "-").capitalize())
-        self.mut_var        = tk.StringVar(value=p.get("mutation_method", "gaussian").replace("_", " ").capitalize())
-        self.init_var       = tk.StringVar(value=p.get("init_method", "uniform").capitalize())
-        self.dataset_var    = tk.StringVar(value="Synthetic")
+        self.algo_var           = tk.StringVar(value="Coevolution")
+        self.sel_var            = tk.StringVar(value=p.get("selection_method", "tournament").capitalize())
+        self.cx_var             = tk.StringVar(value=p.get("crossover_method", "one_point").replace("_", "-").capitalize())
+        self.mut_var            = tk.StringVar(value=p.get("mutation_method", "gaussian").replace("_", " ").capitalize())
+        self.init_var           = tk.StringVar(value=p.get("init_method", "uniform").capitalize())
+        # ── NEW: replacement_var still exists; default Species for coevo ────
+        self.replacement_var    = tk.StringVar(value=p.get("replacement_method", "species").capitalize())
+        self.dataset_var        = tk.StringVar(value="Synthetic")
 
-        self.pop_size_var   = tk.StringVar(value=str(p.get("population_size", 50)))
-        self.gen_var        = tk.StringVar(value=str(p.get("num_generations", 100)))
-        self.mut_rate_var   = tk.StringVar(value=str(p.get("mutation_rate", 0.3)))
-        self.cx_rate_var    = tk.StringVar(value=str(p.get("crossover_rate", 0.8)))
-        self.tourn_var      = tk.StringVar(value=str(p.get("tournament_size", 3)))
-        self.topn_var       = tk.StringVar(value="5")
-        self.file_var       = tk.StringVar(value="")
-        self.user_sel_var   = tk.StringVar(value="")
+        self.pop_size_var       = tk.StringVar(value=str(p.get("population_size", 50)))
+        self.gen_var            = tk.StringVar(value=str(p.get("num_generations", 100)))
+        self.mut_rate_var       = tk.StringVar(value=str(p.get("mutation_rate", 0.3)))
+        self.cx_rate_var        = tk.StringVar(value=str(p.get("crossover_rate", 0.8)))
+        self.tourn_var          = tk.StringVar(value=str(p.get("tournament_size", 3)))
+        # ── NEW: elite size variable ─────────────────────────────────────────
+        self.elite_size_var     = tk.StringVar(value=str(p.get("elite_size", 5)))
+        self.topn_var           = tk.StringVar(value="5")
+        self.file_var           = tk.StringVar(value="")
+        self.user_sel_var       = tk.StringVar(value="")
+
+    # ──────────────────────────────────────────────────────────────────────────
+    #  UI BUILD
+    # ──────────────────────────────────────────────────────────────────────────
 
     def _build_ui(self):
         title_bar = tk.Frame(self, bg=PANEL, height=44)
@@ -172,7 +202,7 @@ class CoevoApp(tk.Tk):
         tk.Label(
             title_bar,
             text="⚙  EVOLUTIONARY RECOMMENDATION ENGINE",
-            font=("Courier New", 13, "bold"), fg=ACCENT, bg=PANEL
+            font=("Courier New", 13, "bold"), fg=ACCENT, bg=PANEL,
         ).pack(side="left", padx=20, pady=10)
 
         body = tk.Frame(self, bg=BG)
@@ -190,6 +220,7 @@ class CoevoApp(tk.Tk):
         self._build_results(right)
 
     def _build_controls(self, parent):
+        # ── EVOLUTION METHODS card ────────────────────────────────────────────
         card, inner = make_card(parent, "EVOLUTION METHODS")
         card.pack(fill="x", pady=(0, 8))
 
@@ -204,24 +235,46 @@ class CoevoApp(tk.Tk):
         grid_row(inner, 4, "Initialization",
                  styled_combo(inner, self.init_var, ["Uniform", "Gaussian"]))
 
+        # ── NEW: Replacement dropdown (row 5) ────────────────────────────────
+        self._replacement_combo = styled_combo(
+            inner, self.replacement_var,
+            REPLACEMENT_OPTIONS["coevolution"],
+        )
+        grid_row(inner, 5, "Replacement", self._replacement_combo)
+
+        # ── HYPERPARAMETERS card ──────────────────────────────────────────────
         card2, inner2 = make_card(parent, "HYPERPARAMETERS")
         card2.pack(fill="x", pady=(0, 8))
 
-        entries = [
+        hyper_entries = [
             ("Population size",  self.pop_size_var),
             ("Generations",      self.gen_var),
             ("Mutation rate",    self.mut_rate_var),
             ("Crossover rate",   self.cx_rate_var),
         ]
-        for i, (lbl, var) in enumerate(entries):
+        for i, (lbl, var) in enumerate(hyper_entries):
             grid_row(inner2, i, lbl, styled_entry(inner2, var))
 
+        base_row = len(hyper_entries)
+
+        # Tournament size
         styled_label(inner2, "Tournament size").grid(
-            row=len(entries), column=0, sticky="w", pady=5, padx=(0, 10))
+            row=base_row, column=0, sticky="w", pady=5, padx=(0, 10))
         self._tourn_entry = styled_entry(inner2, self.tourn_var)
-        self._tourn_entry.grid(row=len(entries), column=1, sticky="w", pady=5)
+        self._tourn_entry.grid(row=base_row, column=1, sticky="w", pady=5)
         self._toggle_tournament()
 
+        # ── NEW: Elite size (always visible; relevant when Elitist) ─────────
+        self._elite_size_label = styled_label(inner2, "Elite size")
+        self._elite_size_label.grid(
+            row=base_row + 1, column=0, sticky="w", pady=5, padx=(0, 10))
+        self._elite_size_entry = styled_entry(inner2, self.elite_size_var)
+        self._elite_size_entry.grid(
+            row=base_row + 1, column=1, sticky="w", pady=5)
+        # Colour hint: dim when not Elitist
+        self._refresh_elite_size_style()
+
+        # ── DATASET card ──────────────────────────────────────────────────────
         card3, inner3 = make_card(parent, "DATASET")
         card3.pack(fill="x", pady=(0, 8))
 
@@ -230,22 +283,24 @@ class CoevoApp(tk.Tk):
 
         self._file_frame = tk.Frame(inner3, bg=CARD)
         self._file_frame.grid(row=1, column=0, columnspan=2, sticky="ew", pady=4)
-
         styled_label(self._file_frame, "CSV path").pack(side="left", padx=(0, 8))
         self._file_entry = styled_entry(self._file_frame, self.file_var, width=18)
         self._file_entry.pack(side="left")
         tk.Button(
             self._file_frame, text="Browse",
-            font=FONT_SM, fg=FG, bg=ACCENT2, activebackground=ACCENT,
-            activeforeground=FG, relief="flat", bd=0, padx=6, pady=2,
-            command=self._browse_file
+            font=FONT_SM, fg=FG, bg=ACCENT2,
+            activebackground=ACCENT, activeforeground=FG,
+            relief="flat", bd=0, padx=6, pady=2,
+            command=self._browse_file,
         ).pack(side="left", padx=(6, 0))
         self._toggle_file_picker()
 
+        # ── RESULTS OPTIONS card ──────────────────────────────────────────────
         card4, inner4 = make_card(parent, "RESULTS OPTIONS")
         card4.pack(fill="x", pady=(0, 8))
         grid_row(inner4, 0, "Top-N recommendations", styled_entry(inner4, self.topn_var, 5))
 
+        # Run button
         self._run_btn = tk.Button(
             parent,
             text="▶  RUN EVOLUTION",
@@ -253,13 +308,12 @@ class CoevoApp(tk.Tk):
             fg=BG, bg=ACCENT,
             activebackground="#c73652", activeforeground=BG,
             relief="flat", bd=0, pady=10,
-            command=self._on_run
+            command=self._on_run,
         )
         self._run_btn.pack(fill="x", pady=(4, 0))
 
         self._status_lbl = tk.Label(
-            parent, text="", font=FONT_SM, fg=ACCENT2, bg=BG, anchor="w"
-        )
+            parent, text="", font=FONT_SM, fg=ACCENT2, bg=BG, anchor="w")
         self._status_lbl.pack(fill="x", pady=(4, 0))
 
     def _build_results(self, parent):
@@ -288,8 +342,7 @@ class CoevoApp(tk.Tk):
 
         styled_label(rec_inner, "Select user:").grid(
             row=0, column=0, sticky="w", pady=6, padx=(0, 10))
-        self._user_combo = styled_combo(
-            rec_inner, self.user_sel_var, [], width=12)
+        self._user_combo = styled_combo(rec_inner, self.user_sel_var, [], width=12)
         self._user_combo.grid(row=0, column=1, sticky="w", pady=6)
         self._user_combo.bind("<<ComboboxSelected>>", self._on_user_selected)
 
@@ -300,20 +353,23 @@ class CoevoApp(tk.Tk):
     def _rec_header(self):
         for w in self._rec_frame.winfo_children():
             w.destroy()
-        cols = ["Rank", "Item ID", "Predicted Score", "Bar"]
+        cols   = ["Rank", "Item ID", "Predicted Score", "Bar"]
         widths = [6, 12, 18, 30]
         for c, (col, w) in enumerate(zip(cols, widths)):
             tk.Label(
                 self._rec_frame, text=col, width=w,
                 font=("Courier New", 9, "bold"), fg=ACCENT2, bg=PANEL,
-                anchor="w", padx=4, pady=3
+                anchor="w", padx=4, pady=3,
             ).grid(row=0, column=c, sticky="ew", padx=1, pady=(0, 2))
 
+    # ──────────────────────────────────────────────────────────────────────────
+    #  TOGGLE / CONSTRAINT CALLBACKS
+    # ──────────────────────────────────────────────────────────────────────────
+
     def _toggle_tournament(self, *_):
-        if self.sel_var.get().lower() == "tournament":
-            self._tourn_entry.configure(state="normal", fg=FG)
-        else:
-            self._tourn_entry.configure(state="disabled", fg=FG2)
+        state = "normal" if self.sel_var.get().lower() == "tournament" else "disabled"
+        colour = FG if state == "normal" else FG2
+        self._tourn_entry.configure(state=state, fg=colour)
 
     def _toggle_file_picker(self, *_):
         if self.dataset_var.get().lower().startswith("real"):
@@ -321,10 +377,46 @@ class CoevoApp(tk.Tk):
         else:
             self._file_frame.grid_remove()
 
+    # ── CHANGED: was _toggle_replacement — now enforces constraints and
+    #    shows a warning when an incompatible option is auto-corrected ────────
+    def _on_algo_changed(self, *_):
+        algo_key = self.algo_var.get().lower()
+        allowed  = REPLACEMENT_OPTIONS.get(algo_key, REPLACEMENT_OPTIONS["coevolution"])
+
+        # Update dropdown options
+        self._replacement_combo.configure(values=allowed)
+
+        # ── NEW: enforce constraint — Standard GA must not use Species ───────
+        current = self.replacement_var.get()
+        if current not in allowed:
+            new_val = allowed[0]   # default to first valid option (Elitist)
+            self.replacement_var.set(new_val)
+            self._set_status(
+                f"⚠  '{current}' is not valid for {self.algo_var.get()}. "
+                f"Auto-switched to '{new_val}'.",
+                color=WARN,
+            )
+
+        self._refresh_elite_size_style()
+
+    # ── NEW: dim elite-size field when Elitist is not selected ───────────────
+    def _on_replacement_changed(self, *_):
+        self._refresh_elite_size_style()
+
+    def _refresh_elite_size_style(self):
+        """Visual hint: grey out Elite size label when replacement != Elitist."""
+        is_elitist = self.replacement_var.get().lower() == "elitist"
+        colour = FG if is_elitist else FG2
+        self._elite_size_label.configure(fg=colour)
+        self._elite_size_entry.configure(fg=colour)
+
+    # ──────────────────────────────────────────────────────────────────────────
+    #  FILE / RUN
+    # ──────────────────────────────────────────────────────────────────────────
+
     def _browse_file(self):
         path = filedialog.askopenfilename(
-            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
-        )
+            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
         if path:
             self.file_var.set(path)
 
@@ -346,47 +438,58 @@ class CoevoApp(tk.Tk):
             dataset = self._load_data()
 
             algo = self.algo_var.get().lower()
-            self._set_status(f"Running {algo} for {cfg['num_generations']} generations…")
-            
+            self._set_status(
+                f"Running {algo} for {cfg['num_generations']} generations…")
+
             if "coevolution" in algo:
                 self._results_type = "coevolution"
                 results = run_coevolution(dataset=dataset, config=cfg)
             else:
                 self._results_type = "standard_ga"
-                # Call Standard GA instead
                 results = run_standard_ga(dataset=dataset, config=cfg)
 
-            self._results   = results
-            self._dataset   = dataset
-            self._cfg       = cfg
+            self._results = results
+            self._dataset = dataset
+            self._cfg     = cfg
 
             self.after(0, self._display_results)
+
         except Exception as exc:
             import traceback
             traceback.print_exc()
             self.after(0, lambda: messagebox.showerror("Error", str(exc)))
             self.after(0, self._reset_run_btn)
 
+    # ──────────────────────────────────────────────────────────────────────────
+    #  CONFIG BUILDER
+    # ──────────────────────────────────────────────────────────────────────────
+
+    # ── CHANGED: added elite_size; cleaner normalisation helpers ─────────────
     def _build_config(self):
-        def _f(v): return float(v.get())
-        def _i(v): return int(v.get())
+        def _f(var): return float(var.get())
+        def _i(var): return int(var.get())
 
         sel = self.sel_var.get().lower()
         cx  = self.cx_var.get().lower().replace("-", "_").replace(" ", "_")
         mut = self.mut_var.get().lower().replace(" ", "_")
         ini = self.init_var.get().lower()
+        rep = self.replacement_var.get().lower()
 
         return {
             **PARAMS,
-            "population_size":   _i(self.pop_size_var),
-            "num_generations":   _i(self.gen_var),
-            "mutation_rate":     _f(self.mut_rate_var),
-            "crossover_rate":    _f(self.cx_rate_var),
-            "tournament_size":   _i(self.tourn_var),
-            "selection_method":  sel,
-            "crossover_method":  cx,
-            "mutation_method":   mut,
-            "init_method":       ini,
+            "population_size":    _i(self.pop_size_var),
+            "num_generations":    _i(self.gen_var),
+            "mutation_rate":      _f(self.mut_rate_var),
+            "crossover_rate":     _f(self.cx_rate_var),
+            "tournament_size":    _i(self.tourn_var),
+            # ── NEW ──────────────────────────────────────────────────────────
+            "replacement_method": rep,
+            "elite_size":         _i(self.elite_size_var),
+            # ─────────────────────────────────────────────────────────────────
+            "selection_method":   sel,
+            "crossover_method":   cx,
+            "mutation_method":    mut,
+            "init_method":        ini,
         }
 
     def _load_data(self):
@@ -398,25 +501,26 @@ class CoevoApp(tk.Tk):
             return load_dataset(mode="real", path=path)
         return load_dataset(mode="synthetic")
 
+    # ──────────────────────────────────────────────────────────────────────────
+    #  DISPLAY RESULTS
+    # ──────────────────────────────────────────────────────────────────────────
+
+    # ── CHANGED: unified helper extracts user list & status message ──────────
     def _display_results(self):
         r = self._results
-        
-        # Plotting & Dropdown setup branches based on algorithm
+
         if self._results_type == "coevolution":
             self._plot_fitness(r["user_history"], r["item_history"])
-            user_ids = sorted([u.user_id for u in r["users"]], key=lambda x: (str(type(x)), x))
-            
-            best_u = max(r["users"], key=lambda u: u.fitness or -1e9)
-            best_i = max(r["items"], key=lambda i: i.fitness or -1e9)
-            msg = f"Done — best user: {best_u.fitness:.4f}  |  best item: {best_i.fitness:.4f}"
-            
+            user_ids = self._sorted_ids([u.user_id for u in r["users"]])
+            best_u   = max(r["users"], key=lambda u: u.fitness or -1e9)
+            best_i   = max(r["items"], key=lambda i: i.fitness or -1e9)
+            msg = (f"Done — best user fitness: {best_u.fitness:.4f}  |  "
+                   f"best item fitness: {best_i.fitness:.4f}")
         else:
-            # Standard GA logic
             self._plot_fitness(r["history"], None)
             best_sol = r["best_solution"]
-            user_ids = sorted(best_sol.user_ids, key=lambda x: (str(type(x)), x))
-            
-            msg = f"Done — best entire solution fitness: {best_sol.fitness:.4f}"
+            user_ids = self._sorted_ids(best_sol.user_ids)
+            msg = f"Done — best solution fitness: {best_sol.fitness:.4f}"
 
         self._user_combo.configure(values=[str(uid) for uid in user_ids])
         if user_ids:
@@ -425,6 +529,11 @@ class CoevoApp(tk.Tk):
 
         self._set_status(msg, color=SUCCESS)
         self._reset_run_btn()
+
+    @staticmethod
+    def _sorted_ids(ids):
+        """Sort a mixed list of IDs robustly (int-first, then str)."""
+        return sorted(ids, key=lambda x: (str(type(x)), x))
 
     def _on_user_selected(self, *_):
         if not self._results:
@@ -442,60 +551,62 @@ class CoevoApp(tk.Tk):
         except ValueError:
             topn = 5
 
-        scores = {}
-        
-        # Recommendation prediction branches based on algorithm
-        if self._results_type == "coevolution":
-            users = self._results["users"]
-            items = self._results["items"]
-            user = next((u for u in users if u.user_id == uid), None)
-            if user is None: return
+        scores = self._compute_scores(uid)
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:topn]
+        self._show_recommendations(ranked)
 
-            for item in items:
+    # ── CHANGED: factored score computation out of _on_user_selected ─────────
+    def _compute_scores(self, uid):
+        scores = {}
+        r = self._results
+
+        if self._results_type == "coevolution":
+            user = next((u for u in r["users"] if u.user_id == uid), None)
+            if user is None:
+                return scores
+            for item in r["items"]:
                 s = float(np.dot(user.vector, item.vector))
                 if item.item_id not in scores or s > scores[item.item_id]:
                     scores[item.item_id] = s
-                    
         else:
-            best_sol = self._results["best_solution"]
-            u_vec = best_sol.get_user_vector(uid)
-            if u_vec is None: return
-            
+            best_sol = r["best_solution"]
+            u_vec    = best_sol.get_user_vector(uid)
+            if u_vec is None:
+                return scores
             for item_id in best_sol.item_ids:
                 i_vec = best_sol.get_item_vector(item_id)
                 s = float(np.dot(u_vec, i_vec))
                 if item_id not in scores or s > scores[item_id]:
                     scores[item_id] = s
 
-        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:topn]
-        self._show_recommendations(ranked)
+        return scores
 
     def _show_recommendations(self, ranked):
         self._rec_header()
-
         if not ranked:
             styled_label(self._rec_frame, "No recommendations available.").grid(
                 row=1, column=0, columnspan=4, pady=8)
             return
 
         max_score = max(abs(s) for _, s in ranked) or 1.0
-
         for rank, (iid, score) in enumerate(ranked, 1):
-            bg_row = PANEL if rank % 2 == 0 else CARD
+            bg_row    = PANEL if rank % 2 == 0 else CARD
             bar_width = int(28 * abs(score) / max_score)
-            bar_str = "█" * bar_width + "░" * (28 - bar_width)
-            bar_col = ACCENT if score >= 0 else "#e06c75"
-
-            cells = [str(rank), str(iid), f"{score:+.4f}", bar_str]
-            colors = [FG2, FG, SUCCESS if score >= 0 else "#e06c75", bar_col]
-            widths = [6, 12, 18, 30]
-
+            bar_str   = "█" * bar_width + "░" * (28 - bar_width)
+            bar_col   = ACCENT if score >= 0 else "#e06c75"
+            cells     = [str(rank), str(iid), f"{score:+.4f}", bar_str]
+            colors    = [FG2, FG, SUCCESS if score >= 0 else "#e06c75", bar_col]
+            widths    = [6, 12, 18, 30]
             for c, (val, col, w) in enumerate(zip(cells, colors, widths)):
                 tk.Label(
                     self._rec_frame, text=val, width=w,
                     font=FONT_SM, fg=col, bg=bg_row,
-                    anchor="w", padx=4, pady=4
+                    anchor="w", padx=4, pady=4,
                 ).grid(row=rank, column=c, sticky="ew", padx=1, pady=1)
+
+    # ──────────────────────────────────────────────────────────────────────────
+    #  PLOT HELPERS
+    # ──────────────────────────────────────────────────────────────────────────
 
     def _style_axes(self, ax):
         ax.set_facecolor(ENTRY_BG)
@@ -512,23 +623,28 @@ class CoevoApp(tk.Tk):
     def _plot_fitness(self, line1_hist, line2_hist=None):
         self._ax.clear()
         self._style_axes(self._ax)
-
         gens = range(1, len(line1_hist) + 1)
-        
+
         if line2_hist is not None:
-            # Coevolution plot (2 lines)
-            self._ax.plot(gens, line1_hist, color=ACCENT2,  linewidth=1.8, label="User best fitness")
-            self._ax.plot(gens, line2_hist, color=ACCENT,   linewidth=1.8, label="Item best fitness", linestyle="--")
+            self._ax.plot(gens, line1_hist, color=ACCENT2, linewidth=1.8,
+                          label="User best fitness")
+            self._ax.plot(gens, line2_hist, color=ACCENT, linewidth=1.8,
+                          label="Item best fitness", linestyle="--")
         else:
-            # Standard GA plot (1 line)
-            self._ax.plot(gens, line1_hist, color=ACCENT2,  linewidth=1.8, label="Best Solution Fitness")
+            self._ax.plot(gens, line1_hist, color=ACCENT2, linewidth=1.8,
+                          label="Best Solution Fitness")
 
         self._ax.set_xlabel("Generation", fontsize=8)
         self._ax.set_ylabel("Fitness (−MSE)", fontsize=8)
         self._ax.set_title("Best Fitness per Generation", color=FG, fontsize=9)
-        self._ax.legend(fontsize=8, facecolor=PANEL, edgecolor=FG2, labelcolor=FG, framealpha=0.8)
+        self._ax.legend(fontsize=8, facecolor=PANEL, edgecolor=FG2,
+                        labelcolor=FG, framealpha=0.8)
         self._fig.tight_layout(pad=1.5)
         self._canvas.draw()
+
+    # ──────────────────────────────────────────────────────────────────────────
+    #  UTILITIES
+    # ──────────────────────────────────────────────────────────────────────────
 
     def _set_status(self, msg, color=ACCENT2):
         self.after(0, lambda: self._status_lbl.configure(text=msg, fg=color))
