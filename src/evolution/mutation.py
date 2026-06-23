@@ -2,6 +2,21 @@ import numpy as np
 import random
 
 # -----------------------------------------
+# Random Reset Mutation (Uniform Mutation)
+# -----------------------------------------
+def random_reset_mutation(vector, mutation_rate=0.1, low=-1.0, high=1.0):
+    """
+    Vectorized random reset mutation.
+    """
+    new_vector = vector.copy()
+    
+    mask = np.random.rand(len(vector)) < mutation_rate
+    random_vals = np.random.uniform(low, high, len(vector))
+    new_vector[mask] = random_vals[mask]
+
+    return new_vector
+
+# -----------------------------------------
 # Gaussian Mutation (Non-uniform Mutation)
 # -----------------------------------------
 def gaussian_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
@@ -16,21 +31,6 @@ def gaussian_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
     # Generate noise for all genes, but only apply it where the mask is True
     noise = np.random.normal(mean, std, len(vector))
     new_vector[mask] += noise[mask]
-
-    return new_vector
-
-# -----------------------------------------
-# Random Reset Mutation (Uniform Mutation)
-# -----------------------------------------
-def random_reset_mutation(vector, mutation_rate=0.1, low=-1.0, high=1.0):
-    """
-    Vectorized random reset mutation.
-    """
-    new_vector = vector.copy()
-    
-    mask = np.random.rand(len(vector)) < mutation_rate
-    random_vals = np.random.uniform(low, high, len(vector))
-    new_vector[mask] = random_vals[mask]
 
     return new_vector
 
