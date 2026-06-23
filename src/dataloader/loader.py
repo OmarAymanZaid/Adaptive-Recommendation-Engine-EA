@@ -25,7 +25,7 @@ def generate_synthetic_data(
         for i in range(num_items):
 
             # sparsity (simulate missing ratings)
-            if np.random.rand() > sparsity:
+            if np.random.rand() < sparsity:
                 continue
 
             # Calculate dot product and normalize by dimension to keep it roughly in [-1, 1]
