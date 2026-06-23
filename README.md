@@ -170,13 +170,6 @@ streamlit run src/ui/app.py
 
 ---
 
-## 👥 Authors
-
-* Omar Ayman
-* Team Members
-
----
-
 ## 📄 License
 
 This project is for academic purposes.
