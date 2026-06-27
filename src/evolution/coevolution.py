@@ -1,5 +1,5 @@
 from evolution.evaluation import evaluate_users, evaluate_items
-from evolution.selection import select_population
+from evolution.selection import select_mating_pool
 from evolution.crossover import crossover
 from evolution.mutation import mutate
 from evolution.replacement import species_preserving_replacement
@@ -42,7 +42,7 @@ def run_coevolution(dataset, config):
         # -------------------------
         # Create a user mating pool
         # -------------------------
-        user_selected = select_population(
+        user_selected = select_mating_pool(
             users,
             method=config["selection_method"],
             tournament_size=config.get("tournament_size", 3)
@@ -68,7 +68,7 @@ def run_coevolution(dataset, config):
         # ---------------------------
         # Create an item mating pool
         # ---------------------------
-        item_selected = select_population(
+        item_selected = select_mating_pool(
             items,
             method=config["selection_method"],
             tournament_size=config.get("tournament_size", 3)
