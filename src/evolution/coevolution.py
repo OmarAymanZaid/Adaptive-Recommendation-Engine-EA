@@ -1,10 +1,8 @@
-import copy
-
 from evolution.evaluation import evaluate_users, evaluate_items
 from evolution.selection import select_population
 from evolution.crossover import crossover
 from evolution.mutation import mutate
-from evolution.replacement import elitist_replacement, generational_replacement, species_preserving_replacement
+from evolution.replacement import species_preserving_replacement
 from evolution.population import initialize_populations
 
 def run_coevolution(dataset, config):
