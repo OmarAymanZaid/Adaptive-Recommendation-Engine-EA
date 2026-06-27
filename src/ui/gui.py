@@ -152,7 +152,7 @@ class CoevoApp(tk.Tk):
         self.algo_var       = tk.StringVar(value="Coevolution")
         self.sel_var        = tk.StringVar(value=p.get("selection_method", "tournament").capitalize())
         self.cx_var         = tk.StringVar(value=p.get("crossover_method", "one_point").replace("_", "-").capitalize())
-        self.mut_var        = tk.StringVar(value=p.get("mutation_method", "gaussian").replace("_", " ").capitalize())
+        self.mut_var        = tk.StringVar(value=p.get("mutation_method", "non_uniform").replace("_", "-").capitalize())
         self.init_var       = tk.StringVar(value=p.get("init_method", "uniform").capitalize())
         self.dataset_var    = tk.StringVar(value="Synthetic")
 
@@ -200,7 +200,7 @@ class CoevoApp(tk.Tk):
         grid_row(inner, 2, "Crossover",
                  styled_combo(inner, self.cx_var, ["One-point", "Uniform"]))
         grid_row(inner, 3, "Mutation",
-                 styled_combo(inner, self.mut_var, ["Gaussian", "Random reset"]))
+                 styled_combo(inner, self.mut_var, ["Uniform", "Non-uniform"]))
         grid_row(inner, 4, "Initialization",
                  styled_combo(inner, self.init_var, ["Uniform", "Gaussian"]))
 
@@ -373,7 +373,7 @@ class CoevoApp(tk.Tk):
 
         sel = self.sel_var.get().lower()
         cx  = self.cx_var.get().lower().replace("-", "_").replace(" ", "_")
-        mut = self.mut_var.get().lower().replace(" ", "_")
+        mut = self.mut_var.get().lower().replace("-", "_")
         ini = self.init_var.get().lower()
 
         return {
