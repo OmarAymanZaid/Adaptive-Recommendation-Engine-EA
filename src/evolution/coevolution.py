@@ -76,6 +76,9 @@ def run_coevolution(dataset, config):
             tournament_size=config.get("tournament_size", 3)
         )
 
+        # ------------------------------
+        # Core Evolution loop for items
+        # ------------------------------
         item_offspring = []
         for i in range(0, len(item_selected), 2):
             p1 = item_selected[i]
