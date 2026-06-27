@@ -2,7 +2,7 @@ import copy
 import numpy as np
 
 from evolution.evaluation import evaluate_solutions
-from evolution.selection import select_population
+from evolution.selection import select_mating_pool
 from evolution.crossover import crossover
 from evolution.mutation import mutate
 from evolution.replacement import elitist_replacement
@@ -43,7 +43,7 @@ def run_standard_ga(dataset, config):
         history.append(best_fitness)
 
         # 2. Selection
-        selected = select_population(
+        selected = select_mating_pool(
             population,
             method=config["selection_method"],
             size=pop_size,
