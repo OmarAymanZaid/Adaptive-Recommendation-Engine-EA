@@ -1,9 +1,9 @@
 import numpy as np
 
 # -----------------------------------------
-# Random Reset Mutation (Uniform Mutation)
+# Uniform Mutation (Random Reset Mutation)
 # -----------------------------------------
-def random_reset_mutation(vector, mutation_rate=0.1, low=-1.0, high=1.0):
+def uniform_mutation(vector, mutation_rate=0.1, low=-1.0, high=1.0):
     """
     Vectorized random reset mutation.
     """
@@ -16,11 +16,11 @@ def random_reset_mutation(vector, mutation_rate=0.1, low=-1.0, high=1.0):
     return new_vector
 
 # -----------------------------------------
-# Gaussian Mutation (Non-uniform Mutation)
+# Non-uniform Mutation (Gaussian Mutation)
 # -----------------------------------------
-def gaussian_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
+def non_uniform_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
     """
-    Vectorized Gaussian mutation.
+    Vectorized non-uniform mutation using Gaussian noise.
     """
     new_vector = vector.copy()
     
@@ -36,13 +36,13 @@ def gaussian_mutation(vector, mutation_rate=0.1, mean=0.0, std=0.1):
 # -----------------------------
 # Mutation Dispatcher
 # -----------------------------
-def mutate(individual, method="gaussian", mutation_rate=0.1, **kwargs):
+def mutate(individual, method="non_uniform", mutation_rate=0.1, **kwargs):
     vector = individual.vector
 
-    if method == "gaussian":
-        new_vector = gaussian_mutation(vector, mutation_rate=mutation_rate, mean=kwargs.get("mean", 0.0), std=kwargs.get("std", 0.1))
-    elif method == "random_reset":
-        new_vector = random_reset_mutation(vector, mutation_rate=mutation_rate, low=kwargs.get("low", -1.0), high=kwargs.get("high", 1.0))
+    if method == "uniform":
+        new_vector = uniform_mutation(vector, mutation_rate=mutation_rate, low=kwargs.get("low", -1.0), high=kwargs.get("high", 1.0))
+    elif method == "non_uniform":
+        new_vector = non_uniform_mutation(vector, mutation_rate=mutation_rate, mean=kwargs.get("mean", 0.0), std=kwargs.get("std", 0.1))
     else:
         raise ValueError(f"Unknown mutation method: {method}")
 
