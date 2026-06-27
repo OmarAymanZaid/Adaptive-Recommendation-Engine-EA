@@ -1,4 +1,4 @@
-#  Adaptive Recommendation Engine using Coevolutionary Algorithms
+# 🧬 Adaptive Recommendation Engine using Coevolutionary Algorithms
 
 ## 1. Overview
 
