@@ -7,7 +7,7 @@ PARAMS = {
     "tournament_size": 2,      # Needed for tournament selection
 
     "crossover_method": "one_point",
-    "mutation_method": "gaussian",
+    "mutation_method": "non_uniform",
 
     "mutation_rate": 0.3,
     "crossover_rate": 0.8,
