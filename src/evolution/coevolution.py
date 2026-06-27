@@ -51,6 +51,10 @@ def run_coevolution(dataset, config):
         )
 
         user_offspring = []
+
+        # ------------------------------
+        # Core Evolution loop for users
+        # ------------------------------
         for i in range(0, len(user_selected), 2):
             p1 = user_selected[i]
             p2 = user_selected[(i + 1) % len(user_selected)]
