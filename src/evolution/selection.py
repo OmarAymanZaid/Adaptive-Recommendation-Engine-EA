@@ -53,7 +53,7 @@ def select_parents(population, method="tournament", tournament_size=3):
 
 
 # Population Selection Dispatcher
-def select_population(population, method="tournament", size=None, tournament_size=3):
+def select_mating_pool(population, method="tournament", size=None, tournament_size=3):
     if size is None:
         size = len(population)
 
