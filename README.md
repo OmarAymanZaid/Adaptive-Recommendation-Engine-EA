@@ -114,19 +114,44 @@ A simple user interface allows:
 ```
 adaptive-recommendation-ea/
 │
+├── README.md
+├── requirements.txt
 ├── data/
-├── src/
-│   ├── main.py
-│   ├── config/
-│   ├── data/
-│   ├── models/
-│   ├── evolution/
-│   ├── utils/
-│   ├── experiments/
-│   └── ui/
-│
-├── results/
-└── report/
+└── src/
+    ├── config/
+    │   └── parameters.py
+    │
+    ├── dataloader/
+    │   └── loader.py
+    │
+    ├── evolution/
+    │   ├── coevolution.py
+    │   ├── crossover.py
+    │   ├── evaluation.py
+    │   ├── mutation.py
+    │   ├── population.py
+    │   ├── replacement.py
+    │   ├── run_standard_ga.py
+    │   └── selection.py
+    │
+    ├── experiments/
+    │   ├── runner_2.py
+    │   └── runner.py
+    │
+    ├── models/
+    │   ├── individuals.py
+    │   ├── item.py
+    │   ├── SolutionForGA.py
+    │   └── user.py
+    │
+    ├── ui/
+    │   └── gui.py
+    │
+    └── utils/
+        ├── metrics.py
+        └── seeds.py
+
+
 ```
 
 ---
