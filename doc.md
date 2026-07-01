@@ -19,3 +19,5 @@ It is important to clear up one thing right away: this is not a production-ready
 
 The Real-Time Dashboard <br>
 The core feature of this project is its interactive GUI dashboard. Through this interface, you can dynamically tune different hyperparameters on the fly—like mutation rates, crossover rates, selection mechanics, and replacement strategies. As you adjust these settings, the dashboard updates in real time, allowing you to instantly watch how your tweaks affect the model's accuracy and how fast it learns (converges).
+
+## 4. System Design
