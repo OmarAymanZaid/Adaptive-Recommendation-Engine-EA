@@ -102,3 +102,7 @@ If you need to cite the literature or theory behind these design choices, they a
     - Aggarwal, C. C. (2016). "Recommender Systems: The Textbook." Springer.
 
     - Why it matches our code: Chapter 3 covers collaborative filtering and matrix factorization, detailing how simulated datasets are frequently used to evaluate algorithm behavior under controlled conditions.
+
+### 4.3 Representation
+
+In almost any recommendation system that relies on making predictions (whether it uses traditional machine learning or evolutionary algorithms), users and items must be represented mathematically. We do this by converting them into vectors—which are essentially just lists of numbers.
