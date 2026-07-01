@@ -21,3 +21,8 @@ The Real-Time Dashboard <br>
 The core feature of this project is its interactive GUI dashboard. Through this interface, you can dynamically tune different hyperparameters on the fly—like mutation rates, crossover rates, selection mechanics, and replacement strategies. As you adjust these settings, the dashboard updates in real time, allowing you to instantly watch how your tweaks affect the model's accuracy and how fast it learns (converges).
 
 ## 4. System Design
+
+4.1 Overview <br>
+At its core, our system deals with two main groups: users and items. In a normal scenario, users rate items on a scale from 1 to 5. However, they don't rate everything in the database—in fact, most users only rate a tiny fraction of items, and some might not rate anything at all.
+
+Our goal is to predict the missing ratings. If we can look at a user's past behavior (the items they liked and gave high ratings to, or disliked and gave low ratings to), we can guess how they would rate an item they haven't seen yet. Instead of using traditional machine learning gradient descent to solve this, we are using Evolutionary Algorithms (EAs).
