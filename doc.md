@@ -225,3 +225,18 @@ Where everything comes together to actually run the training loop.
 
 This chapter dives into the exact mechanics of our genetic algorithm, explaining how we adapted textbook evolutionary concepts to fit the unique requirements of a Matrix Factorization problem.
 
+### 5.1 Population Mapping and the Nature of the Problem
+
+In a Genetic Algorithm textbook, a population is a collection of candidate solutions to the entire problem. For example, if you are solving the Traveling Salesperson Problem (TSP), a single chromosome represents a complete, finished route, and your population might consist of 100 different route variations competing against each other.
+
+However, in a recommendation system based on Matrix Factorization, a "complete solution" is the entire massive matrix containing every single user and item. If a single chromosome had to represent the entire universe of users and items at once, the chromosome size would be gigantic, making the search space incredibly inefficient to explore globally.
+
+To solve this, our system treats individual components as the chromosomes:
+
+- Each chromosome represents a single, specific user vector (e.g., User #5) or a single, specific item vector (e.g., Item #12).
+
+- Therefore, the population size is not an arbitrary number (like 100 or 500); it is the exact number of unique users ($M$) or items ($N$) currently in our dataset.
+
+**Is This a Limitation?** <br>
+Yes and no. This setup forces a strict 1:1 mapping between a physical entity ID and a chromosome. The downside is that you don't have multiple variations of "User #5" competing in the same population pool at the same time. Instead, those variations are explored across time (generations) rather than space (simultaneous random solutions).
+
