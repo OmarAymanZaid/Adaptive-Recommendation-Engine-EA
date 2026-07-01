@@ -52,3 +52,12 @@ Once the evolution process is complete and the vectors are trained, the system c
 ### 4.2 Dataset
 
 Instead of using a real-world dataset (like MovieLens or Goodreads), this project uses a synthesized dataset. This allows us to control the exact environment, introduce specific amounts of noise, and set up a clear "ground truth" ruleset to see if our Evolutionary Algorithm can successfully reverse-engineer it.
+
+**Dataset Structure** <br>
+The dataset is structured using two Python dictionaries to make lookups fast and straightforward:
+
+- **User Dictionary (user_dict):** The keys are unique user IDs, and the values are lists of tuples. Each tuple contains an item ID and the rating that the user gave to that item:
+{user_id: [(item_id_1, rating), (item_id_2, rating), ...]}
+
+- **Item Dictionary (item_dict):** The keys are unique item IDs, and the values are lists of tuples. Each tuple contains a user ID and the rating that user gave to the item:
+{item_id: [(user_id_1, rating), (user_id_2, rating), ...]}
