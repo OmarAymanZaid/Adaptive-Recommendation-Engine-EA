@@ -33,3 +33,15 @@ We represent every user as a preference vector and every item as a feature vecto
 1. A population of all users in the system.
 2. A population of all items in the system.
 
+**The Evolution Loop** <br>
+We evolve these two populations separately using an interleaved approach. When we focus on the user population (and the exact same logic applies when it's the items' turn), the process goes like this:
+
+- Initialization: We start with random vectors for all the users.
+
+- Evaluation (Fitness Calculation): To find out how good a user's vector is, we look at all the items that specific user has actually rated in our dataset. We pull those item vectors from the item population and calculate the dot product between the user vector and each item vector. This dot product represents our predicted score.
+
+- Error Calculation: We compare our prediction to the actual rating the user gave and calculate the error. We accumulate these errors across all the items the user rated to get the Mean Squared Error (MSE). Because genetic algorithms try to maximize fitness, we use the negative MSE (-MSE) as the fitness score.
+
+- Reproduction: We run standard genetic algorithm operations—like selection, crossover, and mutation—to create fitter individuals and optimize these vectors over multiple generations until the error stops dropping (converges).
+
+Once we finish a cycle with the users, we switch and do the exact same thing for the items population. By alternating back and forth, we eventually end up with highly optimized vectors for both users and items.
