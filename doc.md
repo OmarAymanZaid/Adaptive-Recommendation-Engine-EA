@@ -129,3 +129,21 @@ The algorithm discovers underlying patterns on its own—such as grouping books 
 
 ### 4.4 Models and Classes
 To translate our evolutionary approach into clean, reusable Python code, we use an Object-Oriented Design. Each chromosome (or entity vector) in our populations is represented as an individual object.
+
+**Class Hierarchy Overview** <br>
+Instead of writing separate, redundant logic for users and items, we implement a base individual class that handles all common mathematical and genetic operators. The specific user and item classes then inherit from this base class.
+
+```
+          +-------------------------+
+          |     BaseIndividual      |  <--  Handles vector math, cloning,
+          +-------------------------+       and tracking fitness (-MSE)
+                       |
+         +-------------+-------------+
+         |                           |
+         v                           v
++------------------+       +------------------+
+|  UserIndividual  |       |  ItemIndividual  |  <--- Adds unique database IDs
++------------------+       +------------------+       (user_id / item_id)
+
+```
+
