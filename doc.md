@@ -188,3 +188,11 @@ Helper files to keep calculations clean and ensure our experiments are reproduci
 - calculate_rmse() / calculate_mae(): Standard error metrics to calculate model accuracy.
 
 - set_seed(): Locks random number generators (numpy and random) so running the same experiment twice yields the exact same results.
+
+**3. Population Management (evolution/population.py)** <br>
+Responsible for spinning up the collections of chromosomes at the very beginning of the program.
+
+- initialize_populations(): The top-level function that triggers the creation of both the user and item populations.
+
+- create_user_population() / create_item_population(): Generates individual vectors using either a flat random uniform setup (random_uniform_vector) or standard normal curves (gaussian_vector).
+
