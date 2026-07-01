@@ -45,3 +45,6 @@ We evolve these two populations separately using an interleaved approach. When w
 - Reproduction: We run standard genetic algorithm operations—like selection, crossover, and mutation—to create fitter individuals and optimize these vectors over multiple generations until the error stops dropping (converges).
 
 Once we finish a cycle with the users, we switch and do the exact same thing for the items population. By alternating back and forth, we eventually end up with highly optimized vectors for both users and items.
+
+**Making Recommendations** <br>
+Once the evolution process is complete and the vectors are trained, the system can generalize to unseen data. The user interface takes these final, evolved vectors and runs a full prediction pass. For any selected user, it calculates the dot product against every single item in the database—regardless of whether the user originally rated it or not—allowing us to rank and recommend the absolute best matches.
