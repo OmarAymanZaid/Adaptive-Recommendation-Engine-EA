@@ -51,3 +51,4 @@ Once the evolution process is complete and the vectors are trained, the system c
 
 ### 4.2 Dataset
 
+Instead of using a real-world dataset (like MovieLens or Goodreads), this project uses a synthesized dataset. This allows us to control the exact environment, introduce specific amounts of noise, and set up a clear "ground truth" ruleset to see if our Evolutionary Algorithm can successfully reverse-engineer it.
