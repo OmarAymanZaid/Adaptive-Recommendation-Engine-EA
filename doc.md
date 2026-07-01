@@ -140,4 +140,29 @@ Instead of writing separate, redundant logic for users and items, we implement a
 +------------------+       +------------------+       (user_id / item_id)
 
 ```
+**Core Classes Breakdown** <br>
 
+```1. BaseIndividual```
+<br> This is the parent class for any individual element in our genetic population. It encapsulates the core properties required by the Evolutionary Algorithm.
+
+- vector: A NumPy array (np.array) representing the chromosome's real-valued genes (the latent factors).
+
+- fitness: Tracks how well this individual describes the data. We initialize this to None, and it is later filled with the negative Mean Squared Error (-MSE).
+
+- predict(other_vector): The core prediction function. It calculates the raw dot product ($\text{User} \cdot \text{Item}$) between this individual's vector and a target vector to approximate a rating score.
+
+- copy(): Creates a deep copy (clone) of the individual, preserving its current vector values and fitness score. This is crucial during selection and crossover so that modifying an offspring does not accidentally ruin the parent.
+
+<br>
+
+```2. UserIndividual```
+<br>Inherits directly from BaseIndividual. It represents a single user within the user population.
+
+- user_id: An explicit identifier that links this specific individual vector back to its unique profile entry in our user_dict dataset.
+
+<br>
+
+```3. ItemIndividual```
+<br>Inherits directly from BaseIndividual. It represents a single item within the item population.
+
+- item_id: An explicit identifier that links this specific individual vector back to its unique profile entry in our item_dict dataset.
