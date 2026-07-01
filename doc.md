@@ -48,3 +48,6 @@ Once we finish a cycle with the users, we switch and do the exact same thing for
 
 **Making Recommendations** <br>
 Once the evolution process is complete and the vectors are trained, the system can generalize to unseen data. The user interface takes these final, evolved vectors and runs a full prediction pass. For any selected user, it calculates the dot product against every single item in the database—regardless of whether the user originally rated it or not—allowing us to rank and recommend the absolute best matches.
+
+### 4.2 Dataset
+
