@@ -21,13 +21,15 @@ Instead of traditional gradient-descent machine learning, this system utilizes C
 
 ## 🧠 Core Idea
 
-* Each **user** is represented as a preference vector
-* Each **item (book)** is represented as a feature vector
-* Ratings are predicted using similarity (e.g., dot product)
-* Two populations evolve together:
+The system models collaborative filtering using real-valued latent factor vectors:
 
-  * Users adapt to better represent preferences
-  * Items adapt to better satisfy users
+* **User Population:** A collection of preference vectors mapping 1:1 to unique user IDs ($M$).
+* **Item Population:** A collection of feature vectors mapping 1:1 to unique item IDs ($N$).
+* **Interaction Prediction:** Ratings are approximated by calculating the mathematical alignment (inner dot product) between a user vector and an item vector ($\text{User} \cdot \text{Item}$).
+
+**The Synthetic Data Loader**
+<br>
+To test the limits of the algorithm, the system generates benchmark datasets via a Low-Rank Matrix Factorization architecture. It establishes a strict "ground truth" ruleset by multiplying uniform latent vectors ($\mathcal{U}(-1, 1)$), normalizing by vector dimension, injecting Gaussian noise ($\epsilon \sim \mathcal{N}(0, \text{noise})$) for human randomness, and downsampling to a targeted missingness level using a stochastic sparsity filter.
 
 ---
 
@@ -35,33 +37,22 @@ Instead of traditional gradient-descent machine learning, this system utilizes C
 
 ### Representation
 
-* `UserIndividual`: vector of floats
-* `ItemIndividual`: vector of floats
+* `UserIndividual`: Real-valued vector of floats bound to a specific `user_id`.
+* `ItemIndividual`: Real-valued vector of floats bound to a specific `item_id`.
 
-### Populations
+### Genetic Operators
 
-* User population
-* Item population
+* **Selection Methods:** Tournament Selection and Roulette Wheel Selection (to fill the mating pool). Parents are coupled via a lightweight sequential pairing loop.
 
-### Selection Methods
+* **Crossover Operators:** One-Point Crossover and Uniform Crossover.
 
-* Tournament Selection
-* Roulette Wheel Selection
+* **Mutation Operators:** Gaussian Mutation (adding small random nudges) and Random Reset Mutation (replacing a gene entirely).
 
-### Crossover Operators
+### Management & Replacement Strategies
 
-* One-Point Crossover
-* Uniform Crossover
+* Generational Model execution.
 
-### Mutation Operators
-
-* Gaussian Mutation
-* Random Reset Mutation
-
-### Survivor Selection
-
-* Generational Replacement
-* Elitism
+* **Replacement Modes:** Generational Replacement, Elitist Replacement, and a specialized Species-Preserving Replacement Strategy.
 
 ### Termination
 
@@ -71,19 +62,17 @@ Instead of traditional gradient-descent machine learning, this system utilizes C
 
 ## 🔁 Coevolution Strategy
 
-The system uses **cooperative coevolution**, where:
+Because the fitness landscapes of users and items are mutually dependent, they cannot optimize globally in isolation. The system implements an interleaved sequential execution mimicking machine learning concepts like Alternating Least Squares (ALS):
 
-* Users are evaluated based on how accurately they predict ratings
-* Items are evaluated based on how well they satisfy users
+1. Freeze the Item Population: Evolve user vectors to better predict existing dataset ratings.
+
+2. Freeze the User Population: Evolve item vectors to better satisfy user preference vectors.
 
 ---
 
-## 🌱 Diversity Preservation
+## 🌱 Diversity Preservation & Anti-Drift
 
-A lightweight diversity mechanism is used to prevent premature convergence, such as:
-
-* Fitness sharing (or)
-* Controlled random re-initialisation
+Because the population size maps 1:1 to explicit physical IDs, standard replacement risks completely wiping out a user's best-known profile due to a destructive mutation. To counter this, the custom Species-Preserving Replacement Strategy acts as our primary shield against Genetic Drift. It treats each unique ID as an immutable "species slot," pools parents ($\mu$) and offspring ($\lambda$), and executes a localized Steady-State $(\mu + \lambda)$ survival policy that preserves exactly one elite vector per ID.
 
 ---
 
@@ -100,13 +89,17 @@ Each configuration is evaluated over multiple runs using controlled random seeds
 
 ---
 
-## 🖥️ Interface
+## 🖥️ Recommendation Dashboard & Interface
 
-A simple user interface allows:
+The GUI dashboard acts as a visual simulator allowing you to:
 
-* Running the algorithm with different parameters
-* Viewing recommended books
-* Observing fitness evolution
+* Run the algorithm and configure parameters (mutation/crossover rates, population initializers, selection types, and replacement taxonomies) on the fly.
+
+* View live training statistics, global Mean Squared Error (MSE), and real-time fitness progression.
+
+* Select a user and display their Top-$N$ best-fitting recommendations calculated by scoring the evolved vector against all items.
+
+* View a relative strength visual progress bar (██████░░░░) that color-shifts based on alignment metrics (e.g., green/blue for positive alignment, red for opposing/negative alignment).
 
 ---
 
@@ -168,22 +161,18 @@ pip install -r requirements.txt
 ### Run the system
 
 ```bash
-python src/main.py
-```
-
-### Run the interface (if applicable)
-
-```bash
-streamlit run src/ui/app.py
+python src/ui/gui.py
 ```
 
 ---
 
 ## 📊 Evaluation Metrics
 
-* Mean Squared Error (MSE)
-* Average fitness across generations
-* Best fitness per run
+* Negative Mean Squared Error (-MSE): Primary fitness function guiding chromosomes into a shared taste space.
+
+* Root Mean Squared Error (RMSE) & Mean Absolute Error (MAE): Standard accuracy benchmarks calculated over known interactions.
+
+* Convergence Speed: Evaluated by observing average and peak population fitness across generations via the GUI.
 
 ---
 
