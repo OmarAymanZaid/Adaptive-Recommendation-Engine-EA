@@ -278,3 +278,13 @@ p1 = item_selected[i]
 p2 = item_selected[(i + 1) % len(item_selected)]
 ```
 
+### 5.4 Management Strategy and Fitness Evaluation
+
+**1. Management Model**
+<br>
+The overarching system runs on a generational model where an entire generation of users or items is evaluated, selected, and bred to create a new generation of offspring.
+
+**2. Evaluation & Fitness Function**
+<br>
+As established in our system design, the algorithm evaluates vectors by predicting known interaction scores using the dot product. Because genetic algorithms naturally look for the highest possible value, our fitness function is the negative Mean Squared Error (-MSE). Minimizing the rating error maximizes this fitness value toward zero.
+
