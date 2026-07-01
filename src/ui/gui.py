@@ -16,21 +16,16 @@ from config.parameters import PARAMS
 from dataloader.loader import load_dataset
 from evolution.coevolution import run_coevolution
 
-# Import the new Standard GA module
 try:
     from evolution.run_standard_ga import run_standard_ga
 except ImportError:
-    # Fallback in case it's named something else
-    pass 
+    run_standard_ga = None
 
-# ─────────────────────────────────────────────
-# Attempt to import set_seed (optional utility)
-# ─────────────────────────────────────────────
 try:
     from utils.seeds import set_seed
 except ImportError:
     def set_seed(seed):
-        import random, numpy as np
+        import random
         random.seed(seed)
         np.random.seed(seed)
 
