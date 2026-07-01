@@ -166,3 +166,10 @@ Instead of writing separate, redundant logic for users and items, we implement a
 <br>Inherits directly from BaseIndividual. It represents a single item within the item population.
 
 - item_id: An explicit identifier that links this specific individual vector back to its unique profile entry in our item_dict dataset.
+
+### 4.5 Functions and Modules
+
+To make the codebase modular and easy to manage, the system is broken down into specific folders (modules), where each file has a focused job. Below is the breakdown of the primary modules and their principal functions.
+
+
+
