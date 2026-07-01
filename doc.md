@@ -84,3 +84,21 @@ if np.random.rand() < sparsity:
     continue
 ```
 
+**Academic & Theoretical Validation** <br>
+While creating a simulated dataset might feel arbitrary at first glance, this implementation actually follows the standard academic blueprint for Synthetic Data Generation in Matrix Factorization (MF) and Collaborative Filtering.
+
+When evaluating new or alternative optimization methods (like EAs) against machine learning problems, using simulated datasets with controlled Gaussian noise and sparsity loops is the textbook method to benchmark convergence rates, parameter sensitivity, and resilience to overfitting.
+
+If you need to cite the literature or theory behind these design choices, they are well-supported by these foundational texts:
+
+1. The Core Concept (Latent Vectors & Dot Product):
+
+    - Koren, Y., Bell, R., & Volinsky, C. (2009). "Matrix Factorization Techniques for Recommender Systems." IEEE Computer.
+
+    - Why it matches our code: This is the seminal paper on the topic. It outlines modeling users and items as vectors in a joint latent factor space where interactions are captured by their inner product.
+
+2. The Evaluation Framework (Synthetic Generation & Noise):
+
+    - Aggarwal, C. C. (2016). "Recommender Systems: The Textbook." Springer.
+
+    - Why it matches our code: Chapter 3 covers collaborative filtering and matrix factorization, detailing how simulated datasets are frequently used to evaluate algorithm behavior under controlled conditions.
