@@ -74,3 +74,13 @@ To create this dataset, the system follows a step-by-step mathematical pipeline:
 4. Inject Stochastic Realism (Noise): Real human behavior isn't a perfect mathematical equation; a user might love a book but rate it poorly just because they had a bad day. We inject Gaussian noise ($\epsilon \sim \mathcal{N}(0, \text{noise})$) to break the "perfect" math. This makes the dataset messy and realistic, ensuring our evolutionary algorithm is robust enough to handle real-world imperfections instead of just overfitting to clean numbers.
 
 5. Scale to Target Range: Finally, we use a scaling formula to transform the normalized, noisy value into a traditional $[1, 5]$ star-rating scale, applying a safety guard (np.clip) to handle any extreme noisy outliers.
+
+**Simulating Sparsity** <br>
+In real life, users only rate a tiny fraction of available items. To mirror this, we introduce a sparsity condition during data generation. If a randomly generated probability is less than our target sparsity threshold, we skip saving that interaction entirely:
+
+```
+# Sparsity condition (simulate missing ratings)
+if np.random.rand() < sparsity:
+    continue
+```
+
