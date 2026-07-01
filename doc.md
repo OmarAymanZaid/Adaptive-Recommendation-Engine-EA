@@ -220,3 +220,8 @@ Where everything comes together to actually run the training loop.
 - evaluate_users() / evaluate_items(): Loops through the respective populations and calculates individual fitnesses (using -MSE) by comparing vector dot products (predict_rating) against active dataset records.
 
 - run_coevolution(): The main evolutionary driver. It coordinates the step-by-step sequential execution: pausing the items to evolve the users, then pausing the users to evolve the items.
+
+## 5. Evolutionary Algorithm Design
+
+This chapter dives into the exact mechanics of our genetic algorithm, explaining how we adapted textbook evolutionary concepts to fit the unique requirements of a Matrix Factorization problem.
+
