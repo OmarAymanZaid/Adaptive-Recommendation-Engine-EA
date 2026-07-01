@@ -117,15 +117,9 @@ The goal is to see how well these two vectors align. The closer a user’s prefe
 Mathematically, we measure this suitability using the dot product, which multiplies the two vectors together to give us a single alignment score.
 
 **Why We Call Them "Latent" Vectors** <br>
-In recommendation systems textbooks, we will often see these vectors referred to as latent vectors (and the space they live in is called the latent factor space).
+In recommendation systems textbooks, we will often see these vectors referred to as latent vectors (and the space they live in is called the latent factor space). The word latent simply means hidden or concealed.
 
-The word latent simply means hidden or concealed.
-
-In a perfect world, we might manually tag every book with explicit features (like "20% romance, 80% sci-fi") and survey every user on exactly what they want. But in reality, human tastes are messy, and tagging millions of items by hand is impossible.
-
-By using latent vectors, we don't actually hardcode what each index in the vector stands for. We don't say "index 0 is action and index 1 is page count." Instead, we just give the algorithm a blank set of numbers (dimensions) for each user and item. As the Evolutionary Algorithm runs and tries to minimize the rating error, it automatically figures out what these hidden factors should be.
-
-The algorithm discovers underlying patterns on its own—such as grouping books by unspoken sub-genres or writing styles—and maps them into a shared mathematical "taste space" without us ever having to explicitly define them.
+In a perfect world, we might manually tag every book with explicit features (like "20% romance, 80% sci-fi") and survey every user on exactly what they want. But in reality, human tastes are messy, and tagging millions of items by hand is impossible. By using latent vectors, we don't actually hardcode what each index in the vector stands for. We don't say "index 0 is action and index 1 is page count." Instead, we just give the algorithm a blank set of numbers (dimensions) for each user and item. As the Evolutionary Algorithm runs and tries to minimize the rating error, it automatically figures out what these hidden factors should be.The algorithm discovers underlying patterns on its own—such as grouping books by unspoken sub-genres or writing styles—and maps them into a shared mathematical "taste space" without us ever having to explicitly define them.
 
 ### 4.4 Models and Classes
 To translate our evolutionary approach into clean, reusable Python code, we use an Object-Oriented Design. Each chromosome (or entity vector) in our populations is represented as an individual object.
