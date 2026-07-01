@@ -240,3 +240,20 @@ To solve this, our system treats individual components as the chromosomes:
 **Is This a Limitation?** <br>
 Yes and no. This setup forces a strict 1:1 mapping between a physical entity ID and a chromosome. The downside is that you don't have multiple variations of "User #5" competing in the same population pool at the same time. Instead, those variations are explored across time (generations) rather than space (simultaneous random solutions).
 
+### 5.2 Chromosome Representation and Genetic Operators
+Because our latent factors are continuous, decimal-based preferences, we use a real-valued representation for our chromosomes. This choice dictates the specific types of mutation and crossover operators we can use.
+
+**1. Mutation**
+<br>Instead of flipping binary bits, our mutation operators must modify continuous floating-point numbers. We implemented two modes:
+
+- Uniform Mutation: Replaces a chosen gene with a totally new random value within our bounded uniform range.
+
+- Non-Uniform (Gaussian) Mutation: Nudges the existing gene value by adding a small amount of random noise from a Gaussian distribution. This allows for fine-tuning vectors as the generations progress.
+
+**2. Crossover**
+<br>
+Crossover blends the characteristics of two parent vectors to create new offspring profiles:
+
+- One-Point Crossover: Chooses a random split point along the vector dimension; genes before the split come from Parent A, and genes after come from Parent B.
+
+- Uniform Crossover: Loops through every vector index individually, tossing a coin to decide whether that specific trait should be inherited from Parent A or Parent B.
