@@ -2,19 +2,20 @@
 
 ## 📌 Overview
 
-This project implements a recommendation system for books using **coevolutionary algorithms**. Two interacting populations—**users** and **items (books)**—are evolved simultaneously to improve recommendation quality over time.
+This project is an experimental evaluation tool built to test, analyze, and visualize how Evolutionary Algorithms (EAs) operate under the hood when tackling complex, multi-variable problems.
 
-The system models user preferences and item characteristics as vector representations and optimises them using evolutionary algorithms.
+Instead of traditional gradient-descent machine learning, this system utilizes Cooperative Coevolution (CCE) to optimize vector representations in a simulated Matrix Factorization environment. It features a real-time interactive dashboard to tune hyperparameters dynamically and instantly observe how those adjustments impact model performance and convergence.
+
+⚠️ Note: This is a benchmark playground and simulation tool for testing genetic strategies, not a production-ready recommender system designed for deployment on real websites
 
 ---
 
 ## 🎯 Objectives
 
-* Formulate the recommendation problem as an **optimisation task**
-* Implement **cooperative coevolution** between users and items
-* Evaluate recommendation quality using fitness functions
-* Experiment with different evolutionary strategies
-* Provide a simple interface to visualise recommendations and parameter effects
+* Formulate the recommendation matrix factorization problem as an evolutionary optimization task.
+* Implement cooperative coevolution between mutually dependent user and item populations.
+* Evaluate vector representations effectively using negative Mean Squared Error (-MSE) as fitness.
+* Provide an interactive, real-time interface to visualize hyperparameters, convergence rates, and final recommendations.
 
 ---
 
