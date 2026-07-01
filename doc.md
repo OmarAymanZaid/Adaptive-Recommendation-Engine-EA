@@ -106,3 +106,12 @@ If you need to cite the literature or theory behind these design choices, they a
 ### 4.3 Representation
 
 In almost any recommendation system that relies on making predictions (whether it uses traditional machine learning or evolutionary algorithms), users and items must be represented mathematically. We do this by converting them into vectors—which are essentially just lists of numbers.
+
+**User Vectors vs. Item Vectors** <br>
+- **The User Vector:** This represents a user's personal tastes or preferences. For example, if our system recommends books, the numbers in the user's vector show how much they like specific attributes, such as {action, classic literature, textbook}.
+
+- **The Item Vector:** This represents the actual characteristics present in a specific item. For a book, its vector numbers reflect how much of those same traits it possesses, like {amount of action, classic style, academic textbook depth}.
+
+The goal is to see how well these two vectors align. The closer a user’s preference numbers match an item’s feature numbers, the more suitable that item is for the user. 
+
+Mathematically, we measure this suitability using the dot product, which multiplies the two vectors together to give us a single alignment score.
