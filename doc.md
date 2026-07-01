@@ -214,3 +214,9 @@ Determines how the system transitions from an old generation to a newly born gen
 
 - species_preserving_replacement(): Our specialized mechanism that groups individuals by their immutable ID to make sure high-performing user or item profiles are never accidentally lost to destructive mutations.
 
+**6. The Execution Core (evaluate.py & coevolution.py)** <br>
+Where everything comes together to actually run the training loop.
+
+- evaluate_users() / evaluate_items(): Loops through the respective populations and calculates individual fitnesses (using -MSE) by comparing vector dot products (predict_rating) against active dataset records.
+
+- run_coevolution(): The main evolutionary driver. It coordinates the step-by-step sequential execution: pausing the items to evolve the users, then pausing the users to evolve the items.
