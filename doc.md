@@ -288,3 +288,21 @@ The overarching system runs on a generational model where an entire generation o
 <br>
 As established in our system design, the algorithm evaluates vectors by predicting known interaction scores using the dot product. Because genetic algorithms naturally look for the highest possible value, our fitness function is the negative Mean Squared Error (-MSE). Minimizing the rating error maximizes this fitness value toward zero.
 
+### 5.5 Custom Replacement and Preserving Diversity
+Because our population maps 1:1 to explicit dataset IDs, standard textbook replacement strategies would completely break our system. If we used a pure generational replacement, a bad mutation could completely wipe out the best-known vector for User #5, causing the system to completely forget that user's optimal profile.
+
+To prevent this, we implemented a highly specialized **Species-Preserving Replacement Strategy**.
+
+**Clarifying the Taxonomy: Is it Formal Speciation?**
+<br>
+- Is it formal Speciation or Niching? No. In classic evolutionary algorithms (like NEAT), "species" are dynamically clustered based on genetic distance (grouping similar-looking vectors into a niche). Our code does not calculate distance metrics between users to group them.
+
+- What is it instead? ID-based Survival. Our code treats each individual unique ID slot as its own immutable "species slot."
+
+**The Mechanism**
+<br>
+Structurally, this strategy is equivalent to a localized Steady-State $(\mu + \lambda)$ survival per slot, scaled across the entire population.The algorithm pools the parents ($\mu$) and the newly generated offspring ($\lambda$), groups them by their permanent database identities (user_id or item_id), and preserves exactly one elite vector per ID.
+
+**Preserving Diversity**
+<br>
+This strict identity-based elitism acts as our primary shield for preserving diversity and fighting Genetic Drift. It guarantees that the best-found vector representation for a specific user or item can never accidentally go extinct due to destructive mutations or crossover steps, keeping our overall "taste space" stable and robust.
