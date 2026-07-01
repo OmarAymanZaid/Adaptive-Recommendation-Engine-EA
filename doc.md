@@ -61,3 +61,16 @@ The dataset is structured using two Python dictionaries to make lookups fast and
 
 - **Item Dictionary (item_dict):** The keys are unique item IDs, and the values are lists of tuples. Each tuple contains a user ID and the rating that user gave to the item:
 {item_id: [(user_id_1, rating), (user_id_2, rating), ...]}
+
+**How the Synthetic Data is Generated** <br>
+To create this dataset, the system follows a step-by-step mathematical pipeline:
+
+1. Create True Latent Vectors: We initialize separate lists of "true" latent vectors for both users and items using a bounded uniform distribution ($\mathcal{U}(-1, 1)$). These represent the hidden, abstract features of our data (e.g., a user's preference for a genre vs. an item containing that genre).
+
+2. Calculate the Dot Product: In a nested loop, we compute the inner product between every single user vector and item vector. The dot product measures alignment; if the vectors point in similar directions in our latent space, it yields a high positive score (strong alignment), and if they oppose each other, it yields a negative score (poor alignment).
+
+3. Normalize by Dimension: Because adding up multiple dimensions could cause the total product to scale wildly (e.g., between -10 and 10 for a 10-dimension vector), we divide the result by the vector dimension (dim). This brings the score back down into a manageable $[-1, 1]$ neighborhood.
+
+4. Inject Stochastic Realism (Noise): Real human behavior isn't a perfect mathematical equation; a user might love a book but rate it poorly just because they had a bad day. We inject Gaussian noise ($\epsilon \sim \mathcal{N}(0, \text{noise})$) to break the "perfect" math. This makes the dataset messy and realistic, ensuring our evolutionary algorithm is robust enough to handle real-world imperfections instead of just overfitting to clean numbers.
+
+5. Scale to Target Range: Finally, we use a scaling formula to transform the normalized, noisy value into a traditional $[1, 5]$ star-rating scale, applying a safety guard (np.clip) to handle any extreme noisy outliers.
