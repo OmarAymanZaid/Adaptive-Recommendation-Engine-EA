@@ -257,3 +257,24 @@ Crossover blends the characteristics of two parent vectors to create new offspri
 - One-Point Crossover: Chooses a random split point along the vector dimension; genes before the split come from Parent A, and genes after come from Parent B.
 
 - Uniform Crossover: Loops through every vector index individually, tossing a coin to decide whether that specific trait should be inherited from Parent A or Parent B.
+
+### 5.3 Selection and Mating Mechanics
+Our system breaks selection down into two distinct phases: choosing who enters the general mating pool, and choosing the exact pairs that reproduce.
+
+**1. Population Selection (The Mating Pool)**
+<br>
+To fill our mating pool with high-performing individuals, we support two classic textbook strategies:
+
+- Tournament Selection: Small groups are chosen at random, and the individual with the best fitness wins a spot in the pool.
+
+- Roulette Wheel Selection: Individuals are assigned a slice of a selection wheel proportional to their fitness, giving better vectors a higher probability of being chosen.
+
+**2. Parent Pairing**
+<br>
+Once the highly fit individuals are chosen and placed into the mating pool array (item_selected or user_selected), we use a lightweight sequential coupling mechanism to pair them up. The code simply loops through adjacent elements:
+
+```
+p1 = item_selected[i]
+p2 = item_selected[(i + 1) % len(item_selected)]
+```
+
