@@ -23,7 +23,7 @@ Instead of traditional gradient-descent machine learning, this system utilizes C
 
 The system models collaborative filtering using real-valued latent factor vectors:
 
-* **User Population:** A collection of preference vectors mapping 1:1 to unique user IDs ($M$).
+* **User Population:** A collection of preference vectors mapping 1:1 to unique user IDs M.
 * **Item Population:** A collection of feature vectors mapping 1:1 to unique item IDs ($N$).
 * **Interaction Prediction:** Ratings are approximated by calculating the mathematical alignment (inner dot product) between a user vector and an item vector ($\text{User} \cdot \text{Item}$).
 
