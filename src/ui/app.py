@@ -1,6 +1,5 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import threading
 import tkinter as tk
@@ -12,17 +11,17 @@ matplotlib.use("TkAgg")
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from config.parameters import PARAMS
-from dataloader.loader import load_dataset
-from evolution.coevolution import run_coevolution
+from ..config.parameters import PARAMS
+from ..dataloader.loader import load_dataset
+from ..evolution.coevolution import run_coevolution
 
 try:
-    from evolution.run_standard_ga import run_standard_ga
+    from ..evolution.run_standard_ga import run_standard_ga
 except ImportError:
     run_standard_ga = None
 
 try:
-    from utils.seeds import set_seed
+    from ..utils.seeds import set_seed
 except ImportError:
     def set_seed(seed):
         import random
