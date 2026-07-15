@@ -1,7 +1,7 @@
 #New class to represent a solution in the genetic algorithm
 
 import numpy as np
-from models.individuals import BaseIndividual
+from .individuals import BaseIndividual
 
 class SolutionIndividual(BaseIndividual):
     def __init__(self, vector, user_ids, item_ids, vector_dim):
