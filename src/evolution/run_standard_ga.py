@@ -1,12 +1,12 @@
 import copy
 import numpy as np
 
-from evolution.evaluation import evaluate_solutions
-from evolution.selection import select_mating_pool
-from evolution.crossover import crossover
-from evolution.mutation import mutate
-from evolution.replacement import elitist_replacement
-from evolution.population import create_solution_population
+from .evaluation import evaluate_solutions
+from .selection import select_mating_pool
+from .crossover import crossover
+from .mutation import mutate
+from .replacement import elitist_replacement
+from .population import create_solution_population
 
 def run_standard_ga(dataset, config):
     """
