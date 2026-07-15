@@ -1,5 +1,5 @@
 # models/item.py
-from models.individuals import BaseIndividual
+from .individuals import BaseIndividual
 
 class ItemIndividual(BaseIndividual):
     def __init__(self, vector, item_id=None):
