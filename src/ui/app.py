@@ -1,3 +1,8 @@
+"""
+Run the script with:
+python -m src.ui.app
+"""
+
 import sys
 import os
 
