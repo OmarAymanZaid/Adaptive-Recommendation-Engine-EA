@@ -1,9 +1,9 @@
-from evolution.evaluation import evaluate_users, evaluate_items
-from evolution.selection import select_mating_pool
-from evolution.crossover import crossover
-from evolution.mutation import mutate
-from evolution.replacement import species_preserving_replacement
-from evolution.population import initialize_populations
+from .evaluation import evaluate_users, evaluate_items
+from .selection import select_mating_pool
+from .crossover import crossover
+from .mutation import mutate
+from .replacement import species_preserving_replacement
+from .population import initialize_populations
 
 def run_coevolution(dataset, config):
     """
