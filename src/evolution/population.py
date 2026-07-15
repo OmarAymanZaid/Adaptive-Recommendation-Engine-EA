@@ -1,7 +1,7 @@
 import numpy as np
-from models.user import UserIndividual
-from models.item import ItemIndividual
-from models.SolutionForGA import SolutionIndividual
+from ..models.user import UserIndividual
+from ..models.item import ItemIndividual
+from ..models.SolutionForGA import SolutionIndividual
 
 
 def random_uniform_vector(dim, low=-1.0, high=1.0):
