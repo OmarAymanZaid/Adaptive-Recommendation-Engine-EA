@@ -161,7 +161,7 @@ pip install -r requirements.txt
 ### Run the system
 
 ```bash
-python src/ui/gui.py
+python -m src.ui.app
 ```
 
 ---
