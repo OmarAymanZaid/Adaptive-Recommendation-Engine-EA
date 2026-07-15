@@ -1,5 +1,5 @@
 # models/user.py
-from models.individuals import BaseIndividual
+from .individuals import BaseIndividual
 
 class UserIndividual(BaseIndividual):
     def __init__(self, vector, user_id=None):
