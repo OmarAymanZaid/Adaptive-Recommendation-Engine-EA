@@ -171,7 +171,7 @@ Instead of writing separate, redundant logic for users and items, we implement a
 
 To make the codebase modular and easy to manage, the system is broken down into specific folders (modules), where each file has a focused job. Below is the breakdown of the primary modules and their principal functions.
 
-**1. Data Loader (dataloader/loader.py)** <br>
+**1. Data Loader (```dataloader/loader.py```)** <br>
 This module handles setting up the dataset that the algorithm will train on.
 
 - load_dataset(): The main entry point that chooses whether to load real data or build a simulated environment.
