@@ -180,7 +180,7 @@ This module handles setting up the dataset that the algorithm will train on.
 
 - load_real_dataset(): Handles reading external, real-world data files.
 
-**2. Evaluation Utilities (utils/metrics.py & utils/seeds.py)** <br>
+**2. Evaluation Utilities (```utils/metrics.py & utils/seeds.py```)** <br>
 Helper files to keep calculations clean and ensure our experiments are reproducible.
 
 - get_predictions_and_truths(): Compares the algorithm's predicted ratings against the true target scores.
