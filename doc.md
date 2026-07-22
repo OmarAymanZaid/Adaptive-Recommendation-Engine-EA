@@ -196,7 +196,7 @@ Responsible for spinning up the collections of chromosomes at the very beginning
 
 - create_user_population() / create_item_population(): Generates individual vectors using either a flat random uniform setup (random_uniform_vector) or standard normal curves (gaussian_vector).
 
-**4. Genetic Operators (mutation.py, crossover.py, selection.py)** <br>
+**4. Genetic Operators (```mutation.py``, crossover.py, selection.py)** <br>
 These modules house the classic textbook evolutionary mechanisms.
 
 - mutate(): Alters genes randomly. Supports both resetting individual traits entirely (random_reset_mutation) or adding small nudges (gaussian_mutation).
