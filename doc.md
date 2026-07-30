@@ -205,7 +205,7 @@ These modules house the classic textbook evolutionary mechanisms.
 
 - select_parents(): Gathers highly fit individuals into a mating pool using either Tournament Selection or Roulette Wheel Selection.
 
-**5. Replacement Strategies (evolution/replacement.py)** <br>
+**5. Replacement Strategies (```evolution/replacement.py```)** <br>
 Determines how the system transitions from an old generation to a newly born generation of offspring.
 
 - generational_replacement(): Replaces the entire parent population with the new offspring.
