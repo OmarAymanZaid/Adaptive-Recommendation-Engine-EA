@@ -11,5 +11,3 @@ class UserIndividual(BaseIndividual):
         clone = self.__class__(self.vector.copy(), user_id=self.user_id)
         clone.fitness = self.fitness
         return clone
-
-    # some comment
