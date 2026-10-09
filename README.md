@@ -6,7 +6,7 @@ This project is an experimental evaluation tool built to test, analyze, and visu
 
 Instead of traditional gradient-descent machine learning, this system utilizes Cooperative Coevolution (CCE) to optimize vector representations in a simulated Matrix Factorization environment. It features a real-time interactive dashboard to tune hyperparameters dynamically and instantly observe how those adjustments impact model performance and convergence.
 
-⚠️ Note: This is a benchmark playground and simulation tool for testing genetic strategies, not a production-ready recommender system designed for deployment on real websites
+⚠️ Note: This is a benchmark playground and simulation tool for testing genetic strategies, not a production-ready recommender system designed for deployment on real websites.
 
 ---
 

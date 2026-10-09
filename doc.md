@@ -196,7 +196,7 @@ Responsible for spinning up the collections of chromosomes at the very beginning
 
 - create_user_population() / create_item_population(): Generates individual vectors using either a flat random uniform setup (random_uniform_vector) or standard normal curves (gaussian_vector).
 
-**4. Genetic Operators (```mutation.py``, crossover.py, selection.py)** <br>
+**4. Genetic Operators (```mutation.py```, ```crossover.py```, ```selection.py```)** <br>
 These modules house the classic textbook evolutionary mechanisms.
 
 - mutate(): Alters genes randomly. Supports both resetting individual traits entirely (random_reset_mutation) or adding small nudges (gaussian_mutation).
@@ -205,7 +205,7 @@ These modules house the classic textbook evolutionary mechanisms.
 
 - select_parents(): Gathers highly fit individuals into a mating pool using either Tournament Selection or Roulette Wheel Selection.
 
-**5. Replacement Strategies (evolution/replacement.py)** <br>
+**5. Replacement Strategies (```evolution/replacement.py```)** <br>
 Determines how the system transitions from an old generation to a newly born generation of offspring.
 
 - generational_replacement(): Replaces the entire parent population with the new offspring.
@@ -214,7 +214,7 @@ Determines how the system transitions from an old generation to a newly born gen
 
 - species_preserving_replacement(): Our specialized mechanism that groups individuals by their immutable ID to make sure high-performing user or item profiles are never accidentally lost to destructive mutations.
 
-**6. The Execution Core (evaluate.py & coevolution.py)** <br>
+**6. The Execution Core (```evaluate.py``` & coevolution.py)** <br>
 Where everything comes together to actually run the training loop.
 
 - evaluate_users() / evaluate_items(): Loops through the respective populations and calculates individual fitnesses (using -MSE) by comparing vector dot products (predict_rating) against active dataset records.
